@@ -1,4 +1,5 @@
 import { Accordition } from '@/components/Accordion'
+import { LoadingListCourse } from '@/components/CourseCard'
 import { Skeleton } from '@/components/Skeleton'
 import { PATH } from '@/config/path'
 import { useQuery } from '@/hooks/useQuery'
@@ -11,17 +12,25 @@ import { Link, generatePath, useParams } from 'react-router-dom'
 function CourseDetail() {
     const { id } = useParams()
     const { data, loading } = useQuery({
+        queryKey: [id],
         queryFn: () => courseService.getDetail(parseInt(id))
+    })
+    // khóa học liên quan
+    const { data: dataCourseRelated, loading: loadingCourseRelated } = useQuery({
+        queryKey: [id],
+        queryFn: ({ signal }) => courseService.courseRelated(parseInt(id), signal)
     })
     useScrollTop()
     // return obj để đảm bảo giá trị của useMemo luôn luôn là 1 object
-    const {path} = useMemo(() => {
-        if(data) {
+    const { path } = useMemo(() => {
+        if (data) {
             const path = generatePath(PATH.CourseRegister, { id })
-            return {path}
+            return { path }
         }
         return {}
     }, [data])
+
+
     if (loading) {
         return (
             <main className="course-detail">
@@ -139,7 +148,22 @@ function CourseDetail() {
                     </div>
                 </div>
             </section>
-
+            {/* khóa học liên quan */}
+            <section className="section-4">
+                <div className="container">
+                    <div className="textbox">
+                        <h3 className="sub-title">Khóa học</h3>
+                        <h2 className="main-title">Liên quan</h2>
+                    </div>
+                    <div className="list row">
+                        <LoadingListCourse
+                            data={dataCourseRelated?.data}
+                            loadingCount={3}
+                            loading={loadingCourseRelated}
+                        />
+                    </div>
+                </div>
+            </section>
         </main>
     )
 }

@@ -11,11 +11,14 @@ import { confirm, regexp, required } from '@/utils/validate'
 import { message } from 'antd'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 function SignUp() {
     const dispatch = useDispatch()
     const [search] = useSearch()
+    const navigate = useNavigate()
     useScrollTop()
+    const pathRegisterCourse = localStorage.getItem('pathRegisterCourse')
     const form = useForm({
         name: [required()],
         username: [required(), regexp('email')],
@@ -31,6 +34,11 @@ function SignUp() {
     useEffect(() => {
         if (search.code) {
             dispatch(loginByCodeThunkAction({ code: search.code }))
+            if(pathRegisterCourse) {
+                setTimeout(() => {
+                    return navigate(pathRegisterCourse)
+                }, 2000)
+            }
         }
     }, [])
     const { loading, refetch: registerService } = useQuery({
@@ -46,6 +54,7 @@ function SignUp() {
             if (form.validate()) {
                 const res = await registerService()
                 message.success(res.message)
+                form.reset()
             }
         } catch (error) {
             handleError(error);

@@ -22,13 +22,19 @@ function SignIn() {
         password: [required()]
     })
 
+    const pathRegisterCourse = localStorage.getItem('pathRegisterCourse')
+    console.log(pathRegisterCourse)
 
     const onSubmit = async () => {
         try {
             if (form.validate()) {
                 await dispatch(loginThunkAction(form.values)).unwrap();
                 message.success('Đăng nhập thành công')
-                navigate(PATH.Profile.index)
+                if(pathRegisterCourse) {
+                    navigate(pathRegisterCourse)
+                } else {
+                    navigate(PATH.Profile.index)
+                }
             }
         } catch (error) {
             handleError(error)

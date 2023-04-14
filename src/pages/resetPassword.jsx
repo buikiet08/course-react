@@ -1,5 +1,6 @@
 import Button from '@/components/Button'
 import Field from '@/components/Field'
+import { PATH } from '@/config/path'
 import { useForm } from '@/hooks/useForm'
 import { useQuery } from '@/hooks/useQuery'
 import { userService } from '@/services/user'
@@ -10,12 +11,13 @@ import { confirm, regexp, required } from '@/utils/validate'
 import { message } from 'antd'
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 function ResetPassword() {
     const [search] = useSearchParams()
 
     const code = search.get('code')
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const { loading: loadingSendMail, refetch: sendMailService } = useQuery({
         enabled: false,
@@ -24,8 +26,8 @@ function ResetPassword() {
     const { loading: loadingReset, refetch: resetMailService } = useQuery({
         enabled: false,
         queryFn: () => userService.resetPasswordByCode({
-            password:formReset.values.password,
-            code:code
+            password: formReset.values.password,
+            code: code
         })
     })
 
@@ -43,9 +45,10 @@ function ResetPassword() {
 
     const onSendMail = async () => {
         try {
-            if(formSendMail.validate()) {
+            if (formSendMail.validate()) {
                 const res = await sendMailService()
                 message.success(res.message)
+                formSendMail.reset()
             }
         } catch (error) {
             handleError(error)
@@ -54,11 +57,13 @@ function ResetPassword() {
 
     const onReset = async () => {
         try {
-            if(formReset.validate()) {
+            if (formReset.validate()) {
                 const res = await resetMailService()
                 message.success('Thay đổi mật khẩu thành công')
                 setToken(res.data)
                 dispatch(getUserThunkAction())
+                formReset.reset()
+                navigate(PATH.SignIn)
             }
         } catch (error) {
             handleError(error);
@@ -69,17 +74,23 @@ function ResetPassword() {
             <div className="auth">
                 {
                     code ?
-                    <div className="wrap">
-                        <h2 className="title">Đặt lại mật khẩu</h2>
-                        <Field {...formReset.register('password')} type="password" placeholder="Mật khẩu " />
-                        <Field {...formReset.register('confirmPassword')} type="password" placeholder="Nhập lại mật khẩu" />
-                        <Button loading={loadingReset} disabled={loadingReset} onClick={onReset} className="btn rect main">Đặt lại mật khẩu</Button>
-                    </div> :
-                    <div className="wrap">
-                        <h2 className="title">Đặt lại mật khẩu</h2>
-                        <Field {...formSendMail.register('username')} type="text" placeholder="Email" />
-                        <Button loading={loadingSendMail} disabled={loadingSendMail} onClick={onSendMail} className="btn rect main">Đặt lại mật khẩu</Button>
-                    </div>
+                        <div className="wrap">
+                            <h2 className="title">Đặt lại mật khẩu</h2>
+                            <div className="mb-[20px]">
+                                <Field {...formReset.register('password')} type="password" placeholder="Mật khẩu " />
+                            </div>
+                            <div className="mb-[20px]">
+                                <Field {...formReset.register('confirmPassword')} type="password" placeholder="Nhập lại mật khẩu" />
+                            </div>
+                            <Button loading={loadingReset} disabled={loadingReset} onClick={onReset} className="btn rect main">Đặt lại mật khẩu</Button>
+                        </div> :
+                        <div className="wrap">
+                            <h2 className="title">Đặt lại mật khẩu</h2>
+                            <div className="mb-[20px]">
+                                <Field {...formSendMail.register('username')} type="text" placeholder="Email" />
+                            </div>
+                            <Button loading={loadingSendMail} disabled={loadingSendMail} onClick={onSendMail} className="btn rect main">Đặt lại mật khẩu</Button>
+                        </div>
                 }
             </div>
         </main>

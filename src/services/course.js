@@ -11,6 +11,9 @@ const courseService = {
    getDetail(id) {
       return http.get(`${COURSE_API}/courses/${id}`)
    },
+   courseRelated(id, signal) {
+      return http.get(`${COURSE_API}/courses/related/${id}`, {signal})
+   },
    registerCourse( id, data ) {
       return http.post(`${COURSE_API}/courses/register/${id}`, data)
    },

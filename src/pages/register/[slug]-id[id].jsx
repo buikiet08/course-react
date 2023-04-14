@@ -26,6 +26,7 @@ function Register() {
     useEffect(() => {
         if (path == pathname && !user) {
             navigate(PATH.SignIn)
+            localStorage.setItem('pathRegisterCourse', path)
             message.warning('Bạn cần đăng nhập để đăng ký khóa học')
             window.addEventListener("popstate", function (event) {
                 // Hành động khi nút "Back" được nhấn
@@ -34,7 +35,13 @@ function Register() {
             });
         }
     }, [])
+    console.log(pathname)
 
+    if(!user) {
+        navigate(PATH.SignIn)
+    } else {
+        localStorage.removeItem('pathRegisterCourse')
+    }
 
     const { data, loading: loadingDetail } = useQuery({
         queryFn: () => courseService.getDetail(parseInt(id))
