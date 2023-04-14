@@ -9,7 +9,6 @@ export const ContextAvatar = createContext()
 function ProfileLayout() {
     const inputRef = useRef()
     const [file,setFile] = useState()
-    console.log(file)
     const {user} = useAuth()
     const avatarDefault = 'https://cdn.landesa.org/wp-content/uploads/default-user-image.png'
     return (

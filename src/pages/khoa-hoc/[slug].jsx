@@ -1,23 +1,56 @@
 import { Accordition } from '@/components/Accordion'
+import { Skeleton } from '@/components/Skeleton'
 import { PATH } from '@/config/path'
 import { useQuery } from '@/hooks/useQuery'
 import { useScrollTop } from '@/hooks/useScrollTop'
 import courseService from '@/services/course'
 import { currency } from '@/utils/currency'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link, generatePath, useParams } from 'react-router-dom'
 
 function CourseDetail() {
-    const {id} = useParams()
-    const {data} = useQuery({
-        queryFn:() => courseService.getDetail(parseInt(id))
+    const { id } = useParams()
+    const { data, loading } = useQuery({
+        queryFn: () => courseService.getDetail(parseInt(id))
     })
     useScrollTop()
-    console.log(data)
-    const path = generatePath(PATH.CourseRegister, {id})
+    // return obj để đảm bảo giá trị của useMemo luôn luôn là 1 object
+    const {path} = useMemo(() => {
+        if(data) {
+            const path = generatePath(PATH.CourseRegister, { id })
+            return {path}
+        }
+        return {}
+    }, [data])
+    if (loading) {
+        return (
+            <main className="course-detail">
+                <section className="banner style2" style={{ backgroundColor: 'rgb(208, 249, 255)' }}>
+                    <div className="container">
+                        <div className="info">
+                            <Skeleton width={300} height={40} />
+                            <br />
+                            <div className="flex items-center gap-5">
+                                <div className="date"><Skeleton width={260} height={20} /></div>
+                                <div className="time"><Skeleton width={260} height={20} /></div>
+                            </div>
+                            <br />
+                            <Skeleton width={160} height={50} />
+                        </div>
+                    </div>
+                    <div className="bottom">
+                        <div className="container flex justify-between items-center">
+                            <Skeleton width={160} height={50} />
+                            <Skeleton width={160} height={50} />
+                        </div>
+                    </div>
+                </section>
+            </main>
+        )
+    }
     return (
         <main className="course-detail" id="main">
-            <section className="banner style2" style={{backgroundColor: data?.data?.template_color_banner || 'rgb(208, 249, 255)'}}>
+            <section className="banner style2" style={{ backgroundColor: data?.data?.template_color_banner || 'rgb(208, 249, 255)' }}>
                 <div className="container">
                     <div className="info">
                         <h1>{data?.data?.title}</h1>
@@ -25,7 +58,7 @@ function CourseDetail() {
                             <div className="date"><strong>Khai giảng:</strong> {data?.data?.opening_time}</div>
                             <div className="time"><strong>Thời lượng:</strong> {data?.data?.count_video} buổi</div>
                         </div>
-                        <Link className="btn white round" style={{backgroundColor: data?.data?.template_color_btn || 'black'}} to={path}>đăng ký</Link>
+                        <Link className="btn white round" style={{ backgroundColor: data?.data?.template_color_btn || 'black' }} to={path}>đăng ký</Link>
                     </div>
                 </div>
                 <div className="bottom">
@@ -58,7 +91,7 @@ function CourseDetail() {
                     <h3 className="title">yêu cầu cần có</h3>
                     <div className="row row-check">
                         {
-                            data?.data?.required.map((e,i) => (
+                            data?.data?.required.map((e, i) => (
                                 <div key={i} className="col-md-6">{e.content}</div>
                             ))
                         }
@@ -66,7 +99,7 @@ function CourseDetail() {
                     <h3 className="title">hình thức học</h3>
                     <div className="row row-check">
                         {
-                            data?.data?.benefits.map((e,i) => (
+                            data?.data?.benefits.map((e, i) => (
                                 <div key={i} className="col-md-6">{e.content}</div>
                             ))
                         }
@@ -106,7 +139,7 @@ function CourseDetail() {
                     </div>
                 </div>
             </section>
-           
+
         </main>
     )
 }

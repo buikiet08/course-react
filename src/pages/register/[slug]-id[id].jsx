@@ -1,6 +1,7 @@
 import Button from '@/components/Button'
 import Field from '@/components/Field'
 import { Select } from '@/components/Select'
+import { Skeleton } from '@/components/Skeleton'
 import { PATH } from '@/config/path'
 import { useAuth } from '@/hooks/useAuth'
 import { useForm } from '@/hooks/useForm'
@@ -16,26 +17,26 @@ import { Link, generatePath, useLocation, useNavigate, useParams } from 'react-r
 
 function Register() {
     const { id } = useParams()
-    const {pathname} = useLocation()
-    const {user} = useAuth()
+    const { pathname } = useLocation()
+    const { user } = useAuth()
     const navigate = useNavigate()
     const [isSuccess, setSuccess] = useState(false)
 
-    const path = generatePath(PATH.CourseRegister, {id})
+    const path = generatePath(PATH.CourseRegister, { id })
     useEffect(() => {
-        if(path == pathname && !user) {
+        if (path == pathname && !user) {
             navigate(PATH.SignIn)
             message.warning('Bạn cần đăng nhập để đăng ký khóa học')
-            window.addEventListener("popstate", function(event) {
+            window.addEventListener("popstate", function (event) {
                 // Hành động khi nút "Back" được nhấn
                 // event.state chứa thông tin về trạng thái trước đó (nếu có)
                 navigate(PATH.Course)
             });
         }
     }, [])
-    
 
-    const { data } = useQuery({
+
+    const { data, loading: loadingDetail } = useQuery({
         queryFn: () => courseService.getDetail(parseInt(id))
     })
     const { loading, refetch: registerService } = useQuery({
@@ -69,7 +70,32 @@ function Register() {
             }
         }
     }
-    
+
+    if (loadingDetail) {
+        return (
+            <section className="register-course">
+                <div className="container">
+                    <div className="wrap container text-center m-auto">
+                        <div className="flex flex-col justify-center items-center">
+                            <div className="main-sub-title text-center"><Skeleton height={30} width={100} /></div>
+                            <br />
+                            <Skeleton height={50} width={280} />
+                            <br />
+                            <div className="flex gap-10 items-center">
+                                <div className="date"><Skeleton height={20} width={140} /></div>
+                                <div className="time"><Skeleton height={20} width={140} /></div>
+                                <div className="time"><Skeleton height={20} width={140} /></div>
+                            </div>
+                        </div>
+                        <div className="form px-10">
+                            <Skeleton height={558} />
+                        </div>
+                    </div>
+                </div>
+            </section>
+        )
+    }
+
     return (
         <main id="main">
             {

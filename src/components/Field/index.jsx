@@ -1,8 +1,9 @@
 import { cn } from '@/utils'
-import React, { useId } from 'react'
+import React, { memo, useId } from 'react'
 import { ErrorStyle, FieldStyle } from './style'
 
 function Field({label,error,renderField,onChange,...props}) {
+    console.log('test field', props.value)
     const id = useId()
 
     const _onChange = (ev) => {
@@ -21,4 +22,6 @@ function Field({label,error,renderField,onChange,...props}) {
     )
 }
 
-export default Field
+export default memo(Field, (oldProps, newProps) => {
+    return oldProps.value === newProps.value && oldProps.error === newProps.error
+})
