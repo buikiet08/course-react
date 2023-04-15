@@ -103,9 +103,9 @@ function Header() {
                     <li>
                         <NavLink to={PATH.Home}>Trang chủ</NavLink>
                     </li>
-                    <li>
+                    {/* <li>
                         <NavLink to={PATH.Team}>Spacedev Team</NavLink>
-                    </li>
+                    </li> */}
                     <li>
                         <NavLink to={PATH.Course}>Khóa Học</NavLink>
                     </li>
