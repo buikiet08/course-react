@@ -19,7 +19,6 @@ function Profile() {
     const dispatch = useDispatch()
     const [loadingTest,setLoadingTest] = useState(false)
     let {file,setFile} = useContext(ContextAvatar)
-    console.log(file)
     const form = useForm({
         name: [required()],
         username: [required(), regexp('email')],

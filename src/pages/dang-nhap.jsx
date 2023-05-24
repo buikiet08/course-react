@@ -23,7 +23,6 @@ function SignIn() {
     })
 
     const pathRegisterCourse = localStorage.getItem('pathRegisterCourse')
-    console.log(pathRegisterCourse)
 
     const onSubmit = async () => {
         try {
